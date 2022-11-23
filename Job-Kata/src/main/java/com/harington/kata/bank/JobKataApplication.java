@@ -9,8 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -54,12 +53,10 @@ public class JobKataApplication {
     }
 
     @Bean
+    @Profile("development")
     public CommandLineRunner testData(AccountRepository accountRepository,
-                                      TransactionRepository transactionRepository,
-                                      Environment environment) {
+                                      TransactionRepository transactionRepository) {
         return args -> {
-            if (!environment.acceptsProfiles(Profiles.of("development")))
-                return;
             System.out.println("Start testData");
             if (accountRepository.count() != 0) return;
             //Account N° 1
