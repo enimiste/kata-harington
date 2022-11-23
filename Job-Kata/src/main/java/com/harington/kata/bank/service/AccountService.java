@@ -26,8 +26,7 @@ public class AccountService {
 
     public @NonNull AccountDto createNewAccount(
             @NotNull @NotEmpty @Size(min = 3) String ownerName,
-            @Min(0) int initialBalanceInCents
-    ) {
+            @Min(0) int initialBalanceInCents) {
         Account account = accountRepository.save(Account.builder()
                 .createdAt(LocalDateTime.now())
                 .ownerName(ownerName)

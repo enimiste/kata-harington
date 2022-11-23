@@ -25,8 +25,8 @@ public class TransactionService {
 
     @Transactional
     synchronized public TransactionDto doDepositOn(@NotNull UUID accountNumber,
-                                                   @Min(1) int amountInCents,
-                                                   @NotNull String description) {
+            @Min(1) int amountInCents,
+            @NotNull String description) {
         return accountRepository.findOneByAccountNumber(accountNumber)
                 .map(acc -> {
                     Transaction tx = Transaction.builder()
@@ -46,8 +46,8 @@ public class TransactionService {
 
     @Transactional
     synchronized public TransactionDto doWithdrawalOn(@NotNull UUID accountNumber,
-                                                      @Min(1) int amountInCents,
-                                                      @NotNull String description) {
+            @Min(1) int amountInCents,
+            @NotNull String description) {
         return accountRepository.findOneByAccountNumber(accountNumber)
                 .map(acc -> {
                     if (acc.getCurrentBalanceInCents() < amountInCents)
@@ -68,7 +68,8 @@ public class TransactionService {
     }
 
     /**
-     * Returns an account's list of transactions ordered by creation datetime in the decreasing order
+     * Returns an account's list of transactions ordered by creation datetime in the
+     * decreasing order
      *
      * @param accountNumber
      * @return

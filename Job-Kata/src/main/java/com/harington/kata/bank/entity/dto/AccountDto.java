@@ -7,9 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 @Builder
 @Getter
 @Value
@@ -20,7 +17,8 @@ public class AccountDto {
     String createdAt;
 
     public static AccountDto fromEntity(Account account) {
-        if (account == null) return null;
+        if (account == null)
+            return null;
         return AccountDto.builder()
                 .currentBalance(AmountFormatter.formatCents(account.getCurrentBalanceInCents()))
                 .ownerName(account.getOwnerName())
