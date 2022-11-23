@@ -107,6 +107,15 @@ public class JobKataApplication {
                                                         .build());
                         txs.forEach(account2::addTx);
                         transactionRepository.saveAll(txs);
+                        //Account N°3
+                        accountRepository.save(
+                                        Account.builder()
+                                                        .accountNumber(UUID.randomUUID())
+                                                        .initialBalanceInCents(0)
+                                                        .currentBalanceInCents(0)
+                                                        .ownerName("Jack Holding")
+                                                        .createdAt(LocalDateTime.now().minusYears(10))
+                                                        .build());
                         System.out.println("Tests Data created");
                 };
         }
