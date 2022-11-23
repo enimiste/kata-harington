@@ -35,7 +35,6 @@ public class AccountService {
                 .initialBalanceInCents(initialBalanceInCents)
                 .accountNumber(UUID.randomUUID())
                 .build());
-        System.out.println(account);
         return AccountDto.fromEntity(account);
     }
 

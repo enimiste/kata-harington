@@ -9,7 +9,6 @@ import com.harington.kata.bank.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -49,7 +48,7 @@ public class AccountResourceController {
         return ResponseEntity.ok(transactionService.getTransactionsHistoryFor(accountNumber));
     }
 
-    @PostMapping("/{accountNumber}/transactions")
+    @PostMapping("/transactions")
     public ResponseEntity<TransactionDto> doOperation(@Valid @RequestBody TransactionRequest request) {
         TransactionDto tx = transactionService.doDepositOn(request.getAccountNumber(), request.getAmountInCents(), request.getDescription());
         return ResponseEntity

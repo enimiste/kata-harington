@@ -2,16 +2,12 @@ package com.harington.kata.bank.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.harington.kata.bank.entity.Transaction;
-import com.harington.kata.bank.entity.dto.AccountDto;
 import com.harington.kata.bank.entity.dto.TransactionDto;
 import com.harington.kata.bank.entity.dto.TransactionRequest;
 import com.harington.kata.bank.exceptions.EntityNotFoundException;
 import com.harington.kata.bank.exceptions.InvalidOperationException;
-import com.harington.kata.bank.formatters.AmountFormatter;
 import com.harington.kata.bank.formatters.DatesFormatter;
-import com.harington.kata.bank.service.AccountService;
 import com.harington.kata.bank.service.TransactionService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +18,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AccountResourceControllerTransactionsTest {
-    final static String API_BASE_URL = "/api/v1/accounts/%s/transactions";
+    final static String API_BASE_URL = "/api/v1/accounts";
+    final static String API_TX_BASE_URL = API_BASE_URL + "/transactions";
+    final static String API_ACCOUNT_TX_BASE_URL = API_BASE_URL + "/%s/transactions";
 
     @Autowired
     MockMvc mockMvc;
@@ -52,7 +50,7 @@ public class AccountResourceControllerTransactionsTest {
                 .description("Dépôt N° 1")
                 .build();
 
-        mockMvc.perform(post(String.format(API_BASE_URL, accountNumber))
+        mockMvc.perform(post(API_TX_BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content((new ObjectMapper()).writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -73,7 +71,7 @@ public class AccountResourceControllerTransactionsTest {
                         Mockito.anyString()))
                 .thenThrow(EntityNotFoundException.class);
 
-        mockMvc.perform(post(String.format(API_BASE_URL, accountNumber))
+        mockMvc.perform(post(API_TX_BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content((new ObjectMapper()).writeValueAsString(request)))
                 .andExpect(status().isNotFound());
@@ -103,7 +101,7 @@ public class AccountResourceControllerTransactionsTest {
         Mockito.when(transactionService.doDepositOn(Mockito.any(),Mockito.anyInt(), Mockito.anyString()))
                 .thenReturn(dto);
 
-        mockMvc.perform(post(String.format(API_BASE_URL, accountNumber))
+        mockMvc.perform(post(API_TX_BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content((new ObjectMapper()).writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -145,7 +143,7 @@ public class AccountResourceControllerTransactionsTest {
                         Mockito.anyString()))
                 .thenReturn(dto);
 
-        mockMvc.perform(post(String.format(API_BASE_URL, accountNumber))
+        mockMvc.perform(post(API_TX_BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content((new ObjectMapper()).writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -187,7 +185,7 @@ public class AccountResourceControllerTransactionsTest {
                         Mockito.anyString()))
                 .thenReturn(dto);
 
-        mockMvc.perform(post(String.format(API_BASE_URL, accountNumber))
+        mockMvc.perform(post(API_TX_BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content((new ObjectMapper()).writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -218,7 +216,7 @@ public class AccountResourceControllerTransactionsTest {
                         Mockito.anyString()))
                 .thenThrow(InvalidOperationException.class);
 
-        mockMvc.perform(post(String.format(API_BASE_URL, accountNumber))
+        mockMvc.perform(post(API_TX_BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content((new ObjectMapper()).writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -230,7 +228,7 @@ public class AccountResourceControllerTransactionsTest {
         Mockito.when(transactionService.getTransactionsHistoryFor(Mockito.any()))
                 .thenReturn(List.of());
 
-        mockMvc.perform(get(String.format(API_BASE_URL, accountNumber))
+        mockMvc.perform(get(String.format(API_ACCOUNT_TX_BASE_URL, accountNumber))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -244,7 +242,7 @@ public class AccountResourceControllerTransactionsTest {
         Mockito.when(transactionService.getTransactionsHistoryFor(Mockito.any()))
                 .thenThrow(EntityNotFoundException.class);
 
-        mockMvc.perform(get(String.format(API_BASE_URL, accountNumber))
+        mockMvc.perform(get(String.format(API_ACCOUNT_TX_BASE_URL, accountNumber))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
@@ -294,7 +292,7 @@ public class AccountResourceControllerTransactionsTest {
                                 .build()
                 ));
 
-        mockMvc.perform(get(String.format(API_BASE_URL, accountNumber))
+        mockMvc.perform(get(String.format(API_ACCOUNT_TX_BASE_URL, accountNumber))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
