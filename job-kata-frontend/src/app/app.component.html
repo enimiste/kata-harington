@@ -1,0 +1,17 @@
+<p>
+  <mat-toolbar color="primary">
+    <div class="app-title" style="cursor: pointer;">
+      <a routerLink="/">Bank Account</a>
+    </div>
+  <ul class="top-menu">
+    <li><a routerLink="/dashboard" routerLinkActive="menu-active">Dashboard</a></li>
+    <li><a routerLink="/accounts" routerLinkActive="menu-active">Accounts Management</a></li>
+  </ul>
+  <span class="hr-spacer"></span>
+  <button mat-icon-button class="logout"
+  aria-label="Logout" title="Logout">
+   <mat-icon>logout</mat-icon>
+ </button>
+</mat-toolbar>
+</p>
+<router-outlet></router-outlet>

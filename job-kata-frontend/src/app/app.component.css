@@ -1,0 +1,57 @@
+.hr-spacer {
+  flex: 1 1 auto;
+}
+
+.logout {
+  cursor: pointer;
+}
+
+.app-title {
+  width: 190px;
+}
+.app-title a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: bolder;
+  font-size: 1.3em;
+}
+
+.app-title:has(a:hover) {
+  font-size: 0.8em;
+}
+
+.top-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.top-menu > li {
+  display: inline-block;
+  margin: 0px 10px;
+  font-size: 0.8em;
+  padding: 10px 10px;
+  color: white;
+}
+
+.top-menu > li:has(a:hover) {
+  font-weight: bold;
+  font-size: 0.9em;
+  background-color: white;
+  color: #3f51b5 !important;
+  border-radius: 10px;
+}
+
+.top-menu a {
+  text-decoration: none;
+  color : inherit;
+}
+
+.top-menu > li:has(a[class=menu-active]) {
+  font-size: 0.8em;
+  background-color: rgba(255, 255, 255, 0.808);
+  color: #3f51b5 !important;
+  border-radius: 10px;
+}

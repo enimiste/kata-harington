@@ -1,0 +1,47 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 10px;
+  margin-bottom: 20px;
+  width: 90wh;
+  height: 85vh;
+  border: 1px solid rgb(243, 240, 240);
+  border-radius: 15px;
+  margin: 0px 10px;
+}
+
+.container > h1 {
+  text-decoration: underline;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.table__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.table__actions .table__action {
+  cursor: pointer;
+}
+
+.success__color {
+  color: greenyellow;
+}
+
+.danger__color {
+  color: red;
+}

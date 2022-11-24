@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>Withdrawal Form</h2>
+<mat-dialog-content class="mat-typography">
+  <h3>Account Information</h3>
+  <h3>Form goes here</h3>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="false" (click)="onSubmit()" cdkFocusInitial>Execute</button>
+</mat-dialog-actions>
