@@ -14,6 +14,8 @@ cd ./Job-Kata
 mvn spring-boot:run -Dspring-boot.run.profiles=development
 ```
 
+It will run on port 8080
+
 ## API :
 
 ```shell
@@ -25,3 +27,10 @@ POST /api/v1/accounts/transactions (create new operation (deposit or withdrawal)
 ```
 
 # Frontend :
+
+```shell
+cd ./
+ng serve
+```
+
+It will run on port 4200
