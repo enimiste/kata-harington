@@ -80,7 +80,6 @@ public class JobKataApplication {
                         List<Transaction> txs = List.of(
                                         Transaction.builder()
                                                         .txRef(UUID.randomUUID())
-                                                        .account(account2)
                                                         .txType(Transaction.TxType.DEPOSIT)
                                                         .amountInCents(40_00)
                                                         .description("Depot d'argent 1")
@@ -89,7 +88,6 @@ public class JobKataApplication {
                                                         .build(),
                                         Transaction.builder()
                                                         .txRef(UUID.randomUUID())
-                                                        .account(account2)
                                                         .txType(Transaction.TxType.DEPOSIT)
                                                         .amountInCents(80_00)
                                                         .description("Depot d'argent 2")
@@ -98,7 +96,6 @@ public class JobKataApplication {
                                                         .build(),
                                         Transaction.builder()
                                                         .txRef(UUID.randomUUID())
-                                                        .account(account2)
                                                         .txType(Transaction.TxType.WITHDRAWAL)
                                                         .amountInCents(20_00)
                                                         .description("Withdrawal d'argent 1")
@@ -107,7 +104,7 @@ public class JobKataApplication {
                                                         .build());
                         txs.forEach(account2::addTx);
                         transactionRepository.saveAll(txs);
-                        //Account N°3
+                        // Account N°3
                         accountRepository.save(
                                         Account.builder()
                                                         .accountNumber(UUID.randomUUID())
@@ -122,7 +119,7 @@ public class JobKataApplication {
 }
 
 @Controller
-class DefaultContoller {
+class DefaultController {
 
         @GetMapping("")
         public String index() {

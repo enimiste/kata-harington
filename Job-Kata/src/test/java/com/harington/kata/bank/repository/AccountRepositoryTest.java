@@ -5,15 +5,10 @@ import com.harington.kata.bank.entity.Transaction;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +29,7 @@ class AccountRepositoryTest {
             transactionRepository.deleteAll();
             accountRepository.deleteAll();
         }
-        //Account N° 1
+        // Account N° 1
         accountRepository.save(
                 Account.builder()
                         .accountNumber(accountNumber1)
@@ -43,7 +38,7 @@ class AccountRepositoryTest {
                         .ownerName("Anis BESSA")
                         .createdAt(LocalDateTime.now().minusMonths(1))
                         .build());
-        //Account N° 2
+        // Account N° 2
         Account account2 = accountRepository.save(
                 Account.builder()
                         .accountNumber(accountNumber2)
@@ -79,8 +74,7 @@ class AccountRepositoryTest {
                         .description("Withdrawal d'argent 1")
                         .postTxAccountBalanceInCents(100_00)
                         .transactionAt(LocalDateTime.now().minusDays(1))
-                        .build()
-        );
+                        .build());
         txs.forEach(account2::addTx);
         transactionRepository.saveAll(txs);
     }
