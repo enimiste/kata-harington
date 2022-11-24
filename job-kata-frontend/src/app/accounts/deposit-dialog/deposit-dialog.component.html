@@ -1,7 +1,22 @@
 <h2 mat-dialog-title>Deposit Form</h2>
-<mat-dialog-content class="mat-typography">
-  <h3>Account Information</h3>
-  <h3>Form goes here</h3>
+<mat-dialog-content class="mat-typography" [formGroup]="form">
+  <div class="fields">
+    <mat-form-field  appearance="outline">
+      <input matInput formControlName="accountNumber" type="text" />
+      <mat-hint>Account Number</mat-hint>
+    </mat-form-field>
+    <mat-form-field  appearance="outline">
+      <mat-label>Amount in Cents</mat-label>
+      <input matInput formControlName="amountInCents" type="number" placeholder="Amount in Cents" />
+      <mat-icon matSuffix>euro</mat-icon>
+      <mat-hint>Account in Cents €</mat-hint>
+    </mat-form-field>
+    <mat-form-field  appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description"  placeholder="Description" ></textarea>
+      <mat-hint>Description</mat-hint>
+    </mat-form-field>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
