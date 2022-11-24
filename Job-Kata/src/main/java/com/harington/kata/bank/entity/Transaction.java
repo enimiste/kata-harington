@@ -24,7 +24,7 @@ public class Transaction {
     @NotNull
     protected UUID txRef;
 
-    @Min(1)
+    @Min(0)
     protected int postTxAccountBalanceInCents;
     @Min(1)
     protected int amountInCents;
