@@ -1,5 +1,6 @@
 package com.harington.kata.bank.api;
 
+import com.harington.kata.bank.entity.Transaction.TxType;
 import com.harington.kata.bank.entity.dto.AccountDto;
 import com.harington.kata.bank.entity.dto.AccountRequest;
 import com.harington.kata.bank.entity.dto.TransactionDto;
@@ -17,9 +18,8 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/accounts",
-        consumes = {MediaType.APPLICATION_JSON_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/api/v1/accounts", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+        MediaType.APPLICATION_JSON_VALUE })
 @RequiredArgsConstructor
 public class AccountResourceController {
     private final AccountService accountService;
@@ -44,13 +44,21 @@ public class AccountResourceController {
     }
 
     @GetMapping("/{accountNumber}/transactions")
-    public ResponseEntity<List<TransactionDto>> getAllTransactionsByAccount(@PathVariable("accountNumber") UUID accountNumber) {
+    public ResponseEntity<List<TransactionDto>> getAllTransactionsByAccount(
+            @PathVariable("accountNumber") UUID accountNumber) {
         return ResponseEntity.ok(transactionService.getTransactionsHistoryFor(accountNumber));
     }
 
     @PostMapping("/transactions")
     public ResponseEntity<TransactionDto> doOperation(@Valid @RequestBody TransactionRequest request) {
-        TransactionDto tx = transactionService.doDepositOn(request.getAccountNumber(), request.getAmountInCents(), request.getDescription());
+        TransactionDto tx;
+        if (request.getOperation() == TxType.DEPOSIT)
+            tx = transactionService.doDepositOn(request.getAccountNumber(), request.getAmountInCents(),
+                    request.getDescription());
+        else
+            tx = transactionService.doWithdrawalOn(request.getAccountNumber(),
+                    request.getAmountInCents(),
+                    request.getDescription());
         return ResponseEntity
                 .created(URI.create("/api/v1/accounts/" + request.getAccountNumber() + "/transactions"))
                 .body(tx);
