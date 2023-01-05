@@ -1,5 +1,7 @@
 package com.harington.kata.bank.entity.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.Builder;
 import lombok.Value;
 
@@ -17,4 +19,10 @@ public class AccountRequest {
     @NotEmpty
     @Size(min = 3)
     String ownerName;
+
+    public String asJson() throws JsonProcessingException {
+        return (new JsonMapper()).writeValueAsString(this);
+    }
+
+
 }

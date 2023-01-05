@@ -88,27 +88,29 @@ public class AccountResourceControllerTransactionsTest {
                                 .build();
 
                 LocalDateTime txAt = LocalDateTime.now();
-                TransactionDto dto = TransactionDto.builder()
-                                .txRef(UUID.randomUUID().toString())
-                                .accountBalance("200.00€")
-                                .transactionAt(DatesFormatter.format(txAt))
-                                .amount("100.00€")
-                                .accountNumber(accountNumber.toString())
-                                .description("Dépôt N° 1")
-                                .operation(Transaction.TxType.DEPOSIT.name())
-                                .build();
+            TransactionDto dto = TransactionDto.builder()
+                    .txRef(UUID.randomUUID().toString())
+                    .accountBalance("200.00€")
+                    .transactionAt(DatesFormatter.format(txAt))
+                    .amount("100.00€")
+                    .accountNumber(accountNumber.toString())
+                    .description("Dépôt N° 1")
+                    .operation(Transaction.TxType.DEPOSIT.name())
+                    .build();
 
-                Mockito.when(transactionService.doDepositOn(Mockito.any(), Mockito.anyInt(), Mockito.anyString()))
-                                .thenReturn(dto);
+            Mockito.when(transactionService.doDepositOn(accountNumber,
+                            100_00,
+                            dto.getDescription()))
+                    .thenReturn(dto);
 
-                mockMvc.perform(post(API_TX_BASE_URL)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content((new ObjectMapper()).writeValueAsString(request)))
-                                .andExpect(status().isCreated())
-                                .andExpect(header().string(HttpHeaders.LOCATION,
-                                                "/api/v1/accounts/" + accountNumber + "/transactions"))
-                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                                .andExpect(jsonPath("$").isNotEmpty())
+            mockMvc.perform(post(API_TX_BASE_URL)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content((new ObjectMapper()).writeValueAsString(request)))
+                    .andExpect(status().isCreated())
+                    .andExpect(header().string(HttpHeaders.LOCATION,
+                            "/api/v1/accounts/" + accountNumber + "/transactions"))
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$").isNotEmpty())
                                 .andExpect(jsonPath("$.txRef").isNotEmpty())
                                 .andExpect(jsonPath("$.accountBalance", is(dto.getAccountBalance())))
                                 .andExpect(jsonPath("$.amount", is(dto.getAmount())))

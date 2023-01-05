@@ -45,6 +45,7 @@ public class AccountService {
     }
 
     public Optional<AccountDto> findByAccountNumber(UUID accountNumber) {
+        var x = accountRepository.trouverAccountsBalance(accountNumber, 100_00);
         return accountRepository.findOneByAccountNumber(accountNumber)
                 .map(AccountDto::fromEntity);
     }
