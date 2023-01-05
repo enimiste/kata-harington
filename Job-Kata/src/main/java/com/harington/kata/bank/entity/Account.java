@@ -21,6 +21,8 @@ import java.util.UUID;
 @ToString
 public class Account {
     public static final String ACCOUNT_NUMBER_COL = "ACCOUNT_NUMBER";
+    @Version
+    private Integer version;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

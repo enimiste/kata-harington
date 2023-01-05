@@ -2,6 +2,6 @@ export interface OperationRequest {
     accountNumber: string;
     //@Min(1)
     amountInCents: number;
-    description?: string;
+    description: string;
     operation: string;
 }

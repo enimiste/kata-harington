@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import javax.swing.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -24,11 +25,14 @@ public class TransactionService {
     private final AccountRepository accountRepository;
 
     @Transactional
-    synchronized public TransactionDto doDepositOn(@NotNull UUID accountNumber,
+    public TransactionDto doDepositOn(@NotNull UUID accountNumber,
             @Min(1) int amountInCents,
             @NotNull String description) {
-        return accountRepository.findOneByAccountNumber(accountNumber)
+        int version = 0;
+        return accountRepository.findOneByAccountNumber(accountNumber)//A
                 .map(acc -> {
+                    if(acc.getVersion()!=version)
+                        throw new InvalidOperationException(String.format("Account with ID %s is no longer valid. Please refresh the page", acc.getId()));
                     Transaction tx = Transaction.builder()
                             .txRef(UUID.randomUUID())
                             .transactionAt(LocalDateTime.now())
@@ -39,19 +43,24 @@ public class TransactionService {
                             .build();
                     acc.incrementBalanceBy(amountInCents);
                     acc.addTx(tx);
-                    accountRepository.save(acc);
+                    accountRepository.save(acc);//B
+//                    (new MailingService()).sendNotification(new MsgDto("Msg : " + acc.getId()));
                     return TransactionDto.fromEntity(tx);
                 }).orElseThrow(EntityNotFoundException::new);
     }
 
     @Transactional
-    synchronized public TransactionDto doWithdrawalOn(@NotNull UUID accountNumber,
+    public TransactionDto doWithdrawalOn(@NotNull UUID accountNumber,
             @Min(1) int amountInCents,
             @NotNull String description) {
+        int version = 0;
         return accountRepository.findOneByAccountNumber(accountNumber)
                 .map(acc -> {
+                    if(acc.getVersion()!=version)
+                        throw new InvalidOperationException(String.format("Account with ID %s is no longer valid. Please refresh the page", acc.getId()));
                     if (acc.getCurrentBalanceInCents() < amountInCents)
-                        throw new InvalidOperationException();
+                        throw new InvalidOperationException(String.format("Account's (ID %s) balance is not enough", acc.getId()));
+
                     Transaction tx = Transaction.builder()
                             .txRef(UUID.randomUUID())
                             .transactionAt(LocalDateTime.now())

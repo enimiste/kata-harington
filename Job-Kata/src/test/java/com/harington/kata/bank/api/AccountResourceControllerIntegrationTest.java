@@ -112,7 +112,6 @@ public class AccountResourceControllerIntegrationTest {
 
     @Test
     public void should_return_at_least_one_element() throws Exception {
-        final String createdAt = DatesFormatter.format(LocalDateTime.now().minusMonths(1));
         mockMvc.perform(get(API_BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

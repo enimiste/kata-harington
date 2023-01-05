@@ -5,12 +5,15 @@ import com.harington.kata.bank.entity.dto.AccountDto;
 import com.harington.kata.bank.entity.dto.AccountRequest;
 import com.harington.kata.bank.entity.dto.TransactionDto;
 import com.harington.kata.bank.entity.dto.TransactionRequest;
+import com.harington.kata.bank.exceptions.EntityNotFoundException;
+import com.harington.kata.bank.exceptions.InvalidOperationException;
 import com.harington.kata.bank.service.AccountService;
 import com.harington.kata.bank.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -18,10 +21,12 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/accounts", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-        MediaType.APPLICATION_JSON_VALUE })
+@RequestMapping(value = AccountResourceController.API_V_1_ACCOUNTS, consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {
+        MediaType.APPLICATION_JSON_VALUE})
 @RequiredArgsConstructor
 public class AccountResourceController {
+    public static final String API_V_1_ACCOUNTS = "/api/v1/accounts";
+    public static final String API_V_1_CLIENTS_ID = API_V_1_ACCOUNTS + "/{id}";
     private final AccountService accountService;
     private final TransactionService transactionService;
 
@@ -50,6 +55,7 @@ public class AccountResourceController {
     }
 
     @PostMapping("/transactions")
+//    @PostMapping("/{accountNumber}/transactions")
     public ResponseEntity<TransactionDto> doOperation(@Valid @RequestBody TransactionRequest request) {
         TransactionDto tx;
         if (request.getOperation() == TxType.DEPOSIT)
@@ -59,6 +65,8 @@ public class AccountResourceController {
             tx = transactionService.doWithdrawalOn(request.getAccountNumber(),
                     request.getAmountInCents(),
                     request.getDescription());
+        /*final URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
+                .path(API_V_1_CLIENTS_ID).build().expand(request.getAccountNumber()).toUri();*/
         return ResponseEntity
                 .created(URI.create("/api/v1/accounts/" + request.getAccountNumber() + "/transactions"))
                 .body(tx);
