@@ -2,18 +2,15 @@ package com.harington.kata.bank.api;
 
 import com.harington.kata.bank.entity.Transaction.TxType;
 import com.harington.kata.bank.entity.dto.AccountDto;
-import com.harington.kata.bank.entity.dto.AccountRequest;
+import com.harington.kata.bank.entity.dto.AccountRequestDto;
 import com.harington.kata.bank.entity.dto.TransactionDto;
-import com.harington.kata.bank.entity.dto.TransactionRequest;
-import com.harington.kata.bank.exceptions.EntityNotFoundException;
-import com.harington.kata.bank.exceptions.InvalidOperationException;
+import com.harington.kata.bank.entity.dto.TransactionRequestDto;
 import com.harington.kata.bank.service.AccountService;
 import com.harington.kata.bank.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -36,7 +33,7 @@ public class AccountResourceController {
     }
 
     @PostMapping("")
-    public ResponseEntity<AccountDto> createNewAccount(@Valid @RequestBody AccountRequest request) {
+    public ResponseEntity<AccountDto> createNewAccount(@Valid @RequestBody AccountRequestDto request) {
         AccountDto dto = accountService.createNewAccount(request.getOwnerName(), request.getInitialBalanceInCents());
         return ResponseEntity.created(URI.create("/api/v1/accounts/" + dto.getAccountNumber())).body(dto);
     }
@@ -56,15 +53,16 @@ public class AccountResourceController {
 
     @PostMapping("/transactions")
 //    @PostMapping("/{accountNumber}/transactions")
-    public ResponseEntity<TransactionDto> doOperation(@Valid @RequestBody TransactionRequest request) {
+    public ResponseEntity<TransactionDto> doOperation(@Valid @RequestBody TransactionRequestDto request) {
         TransactionDto tx;
         if (request.getOperation() == TxType.DEPOSIT)
             tx = transactionService.doDepositOn(request.getAccountNumber(), request.getAmountInCents(),
-                    request.getDescription());
+                    request.getDescription(), request.getAccountVersion());
         else
             tx = transactionService.doWithdrawalOn(request.getAccountNumber(),
                     request.getAmountInCents(),
-                    request.getDescription());
+                    request.getDescription(),
+                    request.getAccountVersion());
         /*final URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
                 .path(API_V_1_CLIENTS_ID).build().expand(request.getAccountNumber()).toUri();*/
         return ResponseEntity

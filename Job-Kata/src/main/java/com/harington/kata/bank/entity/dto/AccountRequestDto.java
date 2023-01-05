@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 
 @Value
 @Builder
-public class AccountRequest {
+public class AccountRequestDto {
     @Min(0)
     int initialBalanceInCents;
     @NotNull

@@ -3,7 +3,7 @@ package com.harington.kata.bank.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.harington.kata.bank.entity.Transaction;
 import com.harington.kata.bank.entity.dto.TransactionDto;
-import com.harington.kata.bank.entity.dto.TransactionRequest;
+import com.harington.kata.bank.entity.dto.TransactionRequestDto;
 import com.harington.kata.bank.exceptions.EntityNotFoundException;
 import com.harington.kata.bank.exceptions.InvalidOperationException;
 import com.harington.kata.bank.formatters.DatesFormatter;
@@ -43,12 +43,12 @@ public class AccountResourceControllerTransactionsTest {
         @Test
         public void should_return_error_when_deposit_request_amount_is_negatif() throws Exception {
                 UUID accountNumber = UUID.randomUUID();
-                TransactionRequest request = TransactionRequest.builder()
-                                .accountNumber(accountNumber)
-                                .amountInCents(-100_00)
-                                .operation(Transaction.TxType.DEPOSIT)
-                                .description("Dépôt N° 1")
-                                .build();
+                TransactionRequestDto request = TransactionRequestDto.builder()
+                        .accountNumber(accountNumber)
+                        .amountInCents(-100_00)
+                        .operation(Transaction.TxType.DEPOSIT)
+                        .description("Dépôt N° 1")
+                        .build();
 
                 mockMvc.perform(post(API_TX_BASE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -59,16 +59,17 @@ public class AccountResourceControllerTransactionsTest {
         @Test
         public void should_return_error_when_deposit_request_account_not_existing() throws Exception {
                 UUID accountNumber = UUID.randomUUID();
-                TransactionRequest request = TransactionRequest.builder()
-                                .accountNumber(accountNumber)
-                                .amountInCents(100_00)
-                                .operation(Transaction.TxType.DEPOSIT)
-                                .description("Dépôt N° 1")
-                                .build();
+                TransactionRequestDto request = TransactionRequestDto.builder()
+                        .accountNumber(accountNumber)
+                        .amountInCents(100_00)
+                        .operation(Transaction.TxType.DEPOSIT)
+                        .description("Dépôt N° 1")
+                        .build();
 
                 Mockito.when(transactionService.doDepositOn(Mockito.any(),
                                 Mockito.anyInt(),
-                                Mockito.anyString()))
+                                Mockito.anyString(),
+                                Mockito.anyInt()))
                                 .thenThrow(EntityNotFoundException.class);
 
                 mockMvc.perform(post(API_TX_BASE_URL)
@@ -80,37 +81,38 @@ public class AccountResourceControllerTransactionsTest {
         @Test
         public void should_update_account_balance_when_do_deposit() throws Exception {
                 UUID accountNumber = UUID.randomUUID();
-                TransactionRequest request = TransactionRequest.builder()
-                                .accountNumber(accountNumber)
-                                .amountInCents(100_00)
-                                .operation(Transaction.TxType.DEPOSIT)
-                                .description("Dépôt N° 1")
-                                .build();
+                TransactionRequestDto request = TransactionRequestDto.builder()
+                        .accountNumber(accountNumber)
+                        .amountInCents(100_00)
+                        .operation(Transaction.TxType.DEPOSIT)
+                        .description("Dépôt N° 1")
+                        .build();
 
                 LocalDateTime txAt = LocalDateTime.now();
-            TransactionDto dto = TransactionDto.builder()
-                    .txRef(UUID.randomUUID().toString())
-                    .accountBalance("200.00€")
-                    .transactionAt(DatesFormatter.format(txAt))
-                    .amount("100.00€")
-                    .accountNumber(accountNumber.toString())
-                    .description("Dépôt N° 1")
-                    .operation(Transaction.TxType.DEPOSIT.name())
-                    .build();
+                TransactionDto dto = TransactionDto.builder()
+                        .txRef(UUID.randomUUID().toString())
+                        .accountBalance("200.00€")
+                        .transactionAt(DatesFormatter.format(txAt))
+                        .amount("100.00€")
+                        .accountNumber(accountNumber.toString())
+                        .description("Dépôt N° 1")
+                        .operation(Transaction.TxType.DEPOSIT.name())
+                        .build();
 
-            Mockito.when(transactionService.doDepositOn(accountNumber,
-                            100_00,
-                            dto.getDescription()))
-                    .thenReturn(dto);
+                Mockito.when(transactionService.doDepositOn(Mockito.eq(accountNumber),
+                                Mockito.eq(100_00),
+                                Mockito.eq(dto.getDescription()),
+                                Mockito.anyInt()))
+                        .thenReturn(dto);
 
-            mockMvc.perform(post(API_TX_BASE_URL)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content((new ObjectMapper()).writeValueAsString(request)))
-                    .andExpect(status().isCreated())
-                    .andExpect(header().string(HttpHeaders.LOCATION,
-                            "/api/v1/accounts/" + accountNumber + "/transactions"))
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$").isNotEmpty())
+                mockMvc.perform(post(API_TX_BASE_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content((new ObjectMapper()).writeValueAsString(request)))
+                        .andExpect(status().isCreated())
+                        .andExpect(header().string(HttpHeaders.LOCATION,
+                                "/api/v1/accounts/" + accountNumber + "/transactions"))
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$").isNotEmpty())
                                 .andExpect(jsonPath("$.txRef").isNotEmpty())
                                 .andExpect(jsonPath("$.accountBalance", is(dto.getAccountBalance())))
                                 .andExpect(jsonPath("$.amount", is(dto.getAmount())))
@@ -123,12 +125,12 @@ public class AccountResourceControllerTransactionsTest {
         @Test
         public void should_update_account_balance_when_do_withdrawal_all() throws Exception {
                 UUID accountNumber = UUID.randomUUID();
-                TransactionRequest request = TransactionRequest.builder()
-                                .accountNumber(accountNumber)
-                                .amountInCents(100_00)
-                                .operation(Transaction.TxType.WITHDRAWAL)
-                                .description("Withdrawal ALL")
-                                .build();
+                TransactionRequestDto request = TransactionRequestDto.builder()
+                        .accountNumber(accountNumber)
+                        .amountInCents(100_00)
+                        .operation(Transaction.TxType.WITHDRAWAL)
+                        .description("Withdrawal ALL")
+                        .build();
 
                 LocalDateTime txAt = LocalDateTime.now();
                 TransactionDto dto = TransactionDto.builder()
@@ -143,7 +145,8 @@ public class AccountResourceControllerTransactionsTest {
 
                 Mockito.when(transactionService.doWithdrawalOn(Mockito.any(),
                                 Mockito.anyInt(),
-                                Mockito.anyString()))
+                                Mockito.anyString(),
+                                Mockito.anyInt()))
                                 .thenReturn(dto);
 
                 mockMvc.perform(post(API_TX_BASE_URL)
@@ -166,12 +169,12 @@ public class AccountResourceControllerTransactionsTest {
         @Test
         public void should_update_account_balance_when_do_withdrawal_partial() throws Exception {
                 UUID accountNumber = UUID.randomUUID();
-                TransactionRequest request = TransactionRequest.builder()
-                                .accountNumber(accountNumber)
-                                .amountInCents(10_00)
-                                .operation(Transaction.TxType.WITHDRAWAL)
-                                .description("Withdrawal 10€")
-                                .build();
+                TransactionRequestDto request = TransactionRequestDto.builder()
+                        .accountNumber(accountNumber)
+                        .amountInCents(10_00)
+                        .operation(Transaction.TxType.WITHDRAWAL)
+                        .description("Withdrawal 10€")
+                        .build();
 
                 LocalDateTime txAt = LocalDateTime.now();
                 TransactionDto dto = TransactionDto.builder()
@@ -186,7 +189,8 @@ public class AccountResourceControllerTransactionsTest {
 
                 Mockito.when(transactionService.doWithdrawalOn(Mockito.any(),
                                 Mockito.anyInt(),
-                                Mockito.anyString()))
+                                Mockito.anyString(),
+                                Mockito.anyInt()))
                                 .thenReturn(dto);
 
                 mockMvc.perform(post(API_TX_BASE_URL)
@@ -209,16 +213,17 @@ public class AccountResourceControllerTransactionsTest {
         @Test
         public void should_update_account_balance_when_do_withdrawal_insuffisant_amount() throws Exception {
                 UUID accountNumber = UUID.randomUUID();
-                TransactionRequest request = TransactionRequest.builder()
-                                .accountNumber(accountNumber)
-                                .amountInCents(500_00)
-                                .operation(Transaction.TxType.WITHDRAWAL)
-                                .description("Withdrawal amount>balance")
-                                .build();
+                TransactionRequestDto request = TransactionRequestDto.builder()
+                        .accountNumber(accountNumber)
+                        .amountInCents(500_00)
+                        .operation(Transaction.TxType.WITHDRAWAL)
+                        .description("Withdrawal amount>balance")
+                        .build();
 
                 Mockito.when(transactionService.doWithdrawalOn(Mockito.any(),
                                 Mockito.anyInt(),
-                                Mockito.anyString()))
+                                Mockito.anyString(),
+                                Mockito.anyInt()))
                                 .thenThrow(InvalidOperationException.class);
 
                 mockMvc.perform(post(API_TX_BASE_URL)

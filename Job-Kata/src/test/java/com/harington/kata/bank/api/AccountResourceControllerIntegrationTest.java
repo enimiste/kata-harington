@@ -3,28 +3,21 @@ package com.harington.kata.bank.api;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.harington.kata.bank.entity.Account;
 import com.harington.kata.bank.entity.Transaction;
-import com.harington.kata.bank.entity.dto.AccountDto;
-import com.harington.kata.bank.entity.dto.AccountRequest;
-import com.harington.kata.bank.formatters.AmountFormatter;
-import com.harington.kata.bank.formatters.DatesFormatter;
+import com.harington.kata.bank.entity.dto.AccountRequestDto;
 import com.harington.kata.bank.repository.AccountRepository;
 import com.harington.kata.bank.repository.TransactionRepository;
-import com.harington.kata.bank.service.AccountService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
@@ -124,7 +117,7 @@ public class AccountResourceControllerIntegrationTest {
 
     @Test
     public void should_return_error_when_balance_negative() throws Exception {
-        AccountRequest request = AccountRequest.builder()
+        AccountRequestDto request = AccountRequestDto.builder()
                 .initialBalanceInCents(-10)
                 .ownerName("NOUNI EL Bachir")
                 .build();
@@ -138,7 +131,7 @@ public class AccountResourceControllerIntegrationTest {
     @Test
     public void should_return_error_when_owner_name_null_or_less_than_3_chars() throws Exception {
         //Null
-        AccountRequest request = AccountRequest.builder()
+        AccountRequestDto request = AccountRequestDto.builder()
                 .initialBalanceInCents(10)
                 .ownerName(null)
                 .build();
@@ -149,7 +142,7 @@ public class AccountResourceControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
 
         //Less than 3 chars
-        AccountRequest request2 = AccountRequest.builder()
+        AccountRequestDto request2 = AccountRequestDto.builder()
                 .initialBalanceInCents(10)
                 .ownerName("ab")
                 .build();
@@ -162,7 +155,7 @@ public class AccountResourceControllerIntegrationTest {
 
     @Test
     public void should_return_created_account() throws Exception {
-        AccountRequest request = AccountRequest.builder()
+        AccountRequestDto request = AccountRequestDto.builder()
                 .initialBalanceInCents(100_00)
                 .ownerName("NOUNI EL Bachir")
                 .build();

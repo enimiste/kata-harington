@@ -10,9 +10,10 @@ import java.util.UUID;
 
 @Builder
 @Value
-public class TransactionRequest {
+public class TransactionRequestDto {
     @NonNull
     UUID accountNumber;
+    int accountVersion;
     @Min(1)
     int amountInCents;
     String description;

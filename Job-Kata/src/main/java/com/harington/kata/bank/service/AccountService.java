@@ -2,6 +2,7 @@ package com.harington.kata.bank.service;
 
 import com.harington.kata.bank.entity.Account;
 import com.harington.kata.bank.entity.dto.AccountDto;
+import com.harington.kata.bank.entity.dto.transformers.AccountDtoTransformer;
 import com.harington.kata.bank.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
@@ -34,19 +35,19 @@ public class AccountService {
                 .initialBalanceInCents(initialBalanceInCents)
                 .accountNumber(UUID.randomUUID())
                 .build());
-        return AccountDto.fromEntity(account);
+        return AccountDtoTransformer.fromEntity(account);
     }
 
     public List<AccountDto> getAllAccounts() {
         return accountRepository.findAll()
                 .stream()
-                .map(AccountDto::fromEntity)
+                .map(AccountDtoTransformer::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public Optional<AccountDto> findByAccountNumber(UUID accountNumber) {
         var x = accountRepository.trouverAccountsBalance(accountNumber, 100_00);
         return accountRepository.findOneByAccountNumber(accountNumber)
-                .map(AccountDto::fromEntity);
+                .map(AccountDtoTransformer::fromEntity);
     }
 }

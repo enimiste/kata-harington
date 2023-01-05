@@ -120,9 +120,10 @@ public class JobKataApplication {
 
 @Controller
 class DefaultController {
-
+        @Value("${frontend.app.url}")
+        String frontendAppUrl;
         @GetMapping("")
         public String index() {
-                return "Bank Account Kata";
+                return "Bank Account Kata. Frontend : " + frontendAppUrl;
         }
 }

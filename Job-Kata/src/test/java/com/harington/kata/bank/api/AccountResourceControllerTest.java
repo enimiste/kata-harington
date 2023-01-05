@@ -2,7 +2,7 @@ package com.harington.kata.bank.api;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.harington.kata.bank.entity.dto.AccountDto;
-import com.harington.kata.bank.entity.dto.AccountRequest;
+import com.harington.kata.bank.entity.dto.AccountRequestDto;
 import com.harington.kata.bank.formatters.AmountFormatter;
 import com.harington.kata.bank.formatters.DatesFormatter;
 import com.harington.kata.bank.service.AccountService;
@@ -84,7 +84,7 @@ public class AccountResourceControllerTest {
         @Test
         public void should_return_error_when_balance_negative() throws Exception {
                 //GIVEN
-                AccountRequest request = AccountRequest.builder()
+                AccountRequestDto request = AccountRequestDto.builder()
                         .initialBalanceInCents(-10)
                         .ownerName("NOUNI EL Bachir")
                         .build();
@@ -101,7 +101,7 @@ public class AccountResourceControllerTest {
         @Test
         public void should_return_error_when_owner_name_null_or_less_than_3_chars() throws Exception {
                 // Null
-                AccountRequest request = AccountRequest.builder()
+                AccountRequestDto request = AccountRequestDto.builder()
                         .initialBalanceInCents(10)
                         .ownerName(null)
                         .build();
@@ -112,7 +112,7 @@ public class AccountResourceControllerTest {
                         .andExpect(status().isBadRequest());
 
                 // Less than 3 chars
-                AccountRequest request2 = AccountRequest.builder()
+                AccountRequestDto request2 = AccountRequestDto.builder()
                         .initialBalanceInCents(10)
                         .ownerName("ab")
                         .build();
@@ -128,7 +128,7 @@ public class AccountResourceControllerTest {
                 //GIVEN
                 final String accNumber = UUID.randomUUID().toString();
                 final String createdAt = DatesFormatter.format(LocalDateTime.now().minusMonths(1));
-                AccountRequest request = AccountRequest.builder()
+                AccountRequestDto request = AccountRequestDto.builder()
                         .initialBalanceInCents(100_00)
                         .ownerName("NOUNI EL Bachir")
                         .build();

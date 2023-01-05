@@ -40,20 +40,30 @@ class TransactionServiceTest {
                                 .thenReturn(Optional.empty());
 
                 assertThrows(EntityNotFoundException.class, () -> {
-                        transactionService.doDepositOn(UUID.randomUUID(), 10000, "Deposit of 100€");
+                        transactionService.doDepositOn(UUID.randomUUID(),
+                                10000,
+                                "Deposit of 100€", 1);
                 });
         }
 
         @Test
         void should_return_error_when_do_operation_with_invalid_request_inputs() {
                 assertThrows(ConstraintViolationException.class, () -> {
-                        transactionService.doDepositOn(UUID.randomUUID(), 0, "Deposit of 0€");
+                        transactionService.doDepositOn(UUID.randomUUID(),
+                                0,
+                                "Deposit of 0€", 1);
                 });
                 assertThrows(ConstraintViolationException.class, () -> {
-                        transactionService.doDepositOn(UUID.randomUUID(), -1, "Deposit of -1€");
+                        transactionService.doDepositOn(UUID.randomUUID(),
+                                -1,
+                                "Deposit of -1€",
+                                1);
                 });
                 assertThrows(ConstraintViolationException.class, () -> {
-                        transactionService.doDepositOn(null, 10, "Deposit of 10€");
+                        transactionService.doDepositOn(null,
+                                10,
+                                "Deposit of 10€",
+                                1);
                 });
         }
 
@@ -62,16 +72,20 @@ class TransactionServiceTest {
                 assertThrows(InvalidOperationException.class, () -> {
                         UUID accountNumber = UUID.randomUUID();
                         Account account = Account.builder()
-                                        .id(2L)
-                                        .accountNumber(accountNumber)
-                                        .initialBalanceInCents(100_00)
-                                        .currentBalanceInCents(100_00)
-                                        .ownerName("Anis BESSA")
-                                        .createdAt(LocalDateTime.now())
-                                        .build();
+                                .id(2L)
+                                .version(1)
+                                .accountNumber(accountNumber)
+                                .initialBalanceInCents(100_00)
+                                .currentBalanceInCents(100_00)
+                                .ownerName("Anis BESSA")
+                                .createdAt(LocalDateTime.now())
+                                .build();
                         Mockito.when(accountRepository.findOneByAccountNumber(Mockito.any()))
-                                        .thenReturn(Optional.of(account));
-                        transactionService.doWithdrawalOn(accountNumber, 1000_00, "Withdrawal of 1000€");
+                                .thenReturn(Optional.of(account));
+                        transactionService.doWithdrawalOn(accountNumber,
+                                1000_00,
+                                "Withdrawal of 1000€",
+                                1);
                 });
         }
 
@@ -80,19 +94,23 @@ class TransactionServiceTest {
                 int accountBalance = 200_00;// 200€
                 UUID accountNumber = UUID.randomUUID();
                 Account account = Account.builder()
-                                .id(2L)
+                        .id(2L)
+                        .version(1)
                                 .accountNumber(accountNumber)
-                                .initialBalanceInCents(accountBalance)
-                                .currentBalanceInCents(accountBalance)
-                                .ownerName("Anis BESSA")
-                                .createdAt(LocalDateTime.now())
-                                .build();
+                        .initialBalanceInCents(accountBalance)
+                        .currentBalanceInCents(accountBalance)
+                        .ownerName("Anis BESSA")
+                        .createdAt(LocalDateTime.now())
+                        .build();
                 Mockito.when(accountRepository.findOneByAccountNumber(Mockito.any()))
-                                .thenReturn(Optional.of(account));
+                        .thenReturn(Optional.of(account));
                 Mockito.when(accountRepository.save(account))
-                                .thenReturn(account);
+                        .thenReturn(account);
 
-                TransactionDto tx = transactionService.doDepositOn(accountNumber, 1000, "Deposit of 00€");
+                TransactionDto tx = transactionService.doDepositOn(accountNumber,
+                        1000,
+                        "Deposit of 00€",
+                        1);
 
                 assertNotNull(tx);
                 assertEquals("10.00€", tx.getAmount());
@@ -108,19 +126,23 @@ class TransactionServiceTest {
                 int accountBalance = 2000_00;// 200€
                 UUID accountNumber = UUID.randomUUID();
                 Account account = Account.builder()
-                                .id(2L)
+                        .id(2L)
+                        .version(1)
                                 .accountNumber(accountNumber)
-                                .initialBalanceInCents(accountBalance)
-                                .currentBalanceInCents(accountBalance)
-                                .ownerName("Anis BESSA")
-                                .createdAt(LocalDateTime.now())
-                                .build();
+                        .initialBalanceInCents(accountBalance)
+                        .currentBalanceInCents(accountBalance)
+                        .ownerName("Anis BESSA")
+                        .createdAt(LocalDateTime.now())
+                        .build();
                 Mockito.when(accountRepository.findOneByAccountNumber(Mockito.any()))
-                                .thenReturn(Optional.of(account));
+                        .thenReturn(Optional.of(account));
                 Mockito.when(accountRepository.save(account))
-                                .thenReturn(account);
+                        .thenReturn(account);
 
-                TransactionDto tx = transactionService.doWithdrawalOn(accountNumber, 1000, "Withdrawal of 1000€");
+                TransactionDto tx = transactionService.doWithdrawalOn(accountNumber,
+                        1000,
+                        "Withdrawal of 1000€",
+                        1);
 
                 assertNotNull(tx);
                 assertEquals("10.00€", tx.getAmount());
@@ -136,19 +158,23 @@ class TransactionServiceTest {
                 int accountBalance = 2000_00;// 200€
                 UUID accountNumber = UUID.randomUUID();
                 Account account = Account.builder()
-                                .id(2L)
+                        .id(2L)
+                        .version(1)
                                 .accountNumber(accountNumber)
-                                .initialBalanceInCents(accountBalance)
-                                .currentBalanceInCents(accountBalance)
-                                .ownerName("Anis BESSA")
-                                .createdAt(LocalDateTime.now())
-                                .build();
+                        .initialBalanceInCents(accountBalance)
+                        .currentBalanceInCents(accountBalance)
+                        .ownerName("Anis BESSA")
+                        .createdAt(LocalDateTime.now())
+                        .build();
                 Mockito.when(accountRepository.findOneByAccountNumber(Mockito.any()))
-                                .thenReturn(Optional.of(account));
+                        .thenReturn(Optional.of(account));
                 Mockito.when(accountRepository.save(account))
-                                .thenReturn(account);
+                        .thenReturn(account);
 
-                TransactionDto tx = transactionService.doWithdrawalOn(accountNumber, accountBalance, "Withdrawal ALL");
+                TransactionDto tx = transactionService.doWithdrawalOn(accountNumber,
+                        accountBalance,
+                        "Withdrawal ALL",
+                        1);
 
                 assertNotNull(tx);
                 assertEquals(AmountFormatter.formatCents(accountBalance), tx.getAmount());
